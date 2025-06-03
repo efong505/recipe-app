@@ -1,0 +1,21 @@
+.news-content {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #333;
+}
+
+.news-heading {
+  margin-bottom: 1rem;
+  font-size: 1.75rem; /* Increased for visibility */
+  font-weight: 700; /* Bolder */
+  color: #111; /* Darker color */
+  border-bottom: 1px solid #ddd; /* Visual separator */
+  padding-bottom: 0.5rem;
+}
+
+.debug-content {
+  margin-bottom: 1rem;
+  color: #f00; /* Red for visibility */
+  font-style: italic;
+}

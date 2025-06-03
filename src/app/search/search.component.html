@@ -1,0 +1,5 @@
+<div>
+  <input [(ngModel)]="query" placeholder="Search for a recipe" />
+  <button (click)="searchRecipe()">Search</button>
+</div>
+<iframe *ngIf="googleSearchUrl" [src]="googleSearchUrl" width="100%" height="600px"></iframe>

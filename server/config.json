@@ -1,0 +1,71 @@
+{
+  "allrecipes.com": {
+    "type": "recipe",
+    "recipeName": "h1.article-heading",
+    "description": "p.article-subheading.text-body-100",
+    "recipeImage": "div.img-placeholder img",
+    "ingredients": "ul.mm-recipes-structured-ingredients__list li",
+    "instructions": "ol.comp.mntl-sc-block.mntl-sc-block-startgroup li"
+  },
+  "tasteofhome.com": {
+    "type": "recipe",
+    "recipeName": "h2.recipe-title",
+    "description": "div.comp article__header--project p",
+    "recipeImage": "",
+    "ingredients": "ul.recipe-ingredients__list li",
+    "instructions": "ol.recipe-directions__list li"
+  },
+  "simplyrecipes.com": {
+    "type": "recipe",
+    "recipeName": "h2.comp.recipe-block__header",
+    "description": "div.comp.article__header--project p",
+    "recipeImage": "div.img-placeholder img",
+    "ingredients": "ul.structured-ingredients__list li",
+    "instructions": "ol.comp.mntl-sc-block.mntl-sc-block-startgroup li"
+  },
+  "epicurious.com": {
+    "type": "recipe",
+    "recipeName": "h1.BaseWrap-sc-gjQpdd",
+    "description": "div.container--body-inner p",
+    "recipeImage": "picture.ResponsiveImagePicture-cWuUZO.dUOtEa.SplitScreenContentHeaderLede-bGywFh.gyNssY.responsive-image img",
+    "ingredients": "div.List-iSNGTT.ljAYJm div.BaseWrap-sc-gjQpdd",
+    "instructions": "ol.InstructionGroupWrapper-bqiIwp.ccobUj li.InstructionListWrapper-dcpygI.bQnYVe p"
+  },
+  "bettycrocker.com": {
+    "type": "recipe",
+    "recipeName": "h1.rdpTitle",
+    "description": "div.container--body-inner p",
+    "recipeImage": "picture.rdpImage img",
+    "ingredients": "div.rdpIngredients ul li",
+    "instructions": "ul.recipeSteps li"
+  },
+  "theepochtimes.com": {
+    "type": "news",
+    "publishedTime": "time[data-testid='post-date']",
+    "title": "h1[data-testid='article-title']",
+    "author": "a[href*='/author/'], span.author, div.byline, span.byline__name, meta[name='author']",
+    "content": "div.post_content, div.article-body, article",
+    "image": "picture img"
+  },
+  "bbc.com": {
+    "type": "news",
+    "publishedTime": "meta[property='article:published_time']",
+    "title": "h1#story-headline",
+    "author": "meta[name='author']",
+    "content": "div.story-body__inner"
+  },
+  "cnn.com": {
+    "type": "news",
+    "publishedTime": "meta[property='article:published_time']",
+    "title": "h1.pg-headline",
+    "author": "meta[name='author']",
+    "content": "div.article__content"
+  },
+  "reuters.com": {
+    "type": "news",
+    "publishedTime": "meta[property='article:published_time']",
+    "title": "h1.article__title",
+    "author": "meta[name='author']",
+    "content": "div.article-body"
+  }
+}
