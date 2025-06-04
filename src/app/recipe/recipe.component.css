@@ -1,21 +1,55 @@
-.news-content {
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-  font-size: 1rem;
-  color: #333;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.news-heading {
-  margin-bottom: 1rem;
-  font-size: 1.75rem; /* Increased for visibility */
-  font-weight: 700; /* Bolder */
-  color: #111; /* Darker color */
-  border-bottom: 1px solid #ddd; /* Visual separator */
-  padding-bottom: 0.5rem;
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.debug-content {
-  margin-bottom: 1rem;
-  color: #f00; /* Red for visibility */
-  font-style: italic;
+.search-bar input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.search-bar button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  padding: 10px;
+  border: 1px solid red;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.recipe-content, .news-content {
+  margin-top: 20px;
+}
+
+.my-5 {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.article-hover-class {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.article-hover-class:hover {
+  text-decoration: underline;
+}
+
+.recipe-image, .article-image, .instruction-image {
+  max-width: 100%;
+  height: auto;
+  margin: 10px 0;
 }

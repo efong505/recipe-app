@@ -42,9 +42,9 @@
   "theepochtimes.com": {
     "type": "news",
     "publishedTime": "time[data-testid='post-date']",
-    "title": "h1[data-testid='article-title']",
+    "title": "h1[data-testid='article-title'], h1[data-testid='special-report-title'], h1[class*='title'], meta[property='og:title']",
     "author": "a[href*='/author/'], span.author, div.byline, span.byline__name, meta[name='author']",
-    "content": "div.post_content, div.article-body, article",
+    "content": "div.article-content, div.post_content, div.article-body, article",
     "image": "picture img"
   },
   "bbc.com": {

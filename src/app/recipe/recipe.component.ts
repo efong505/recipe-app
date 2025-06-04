@@ -6,6 +6,38 @@ import { RecipeService } from '../services/recipe.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
+interface ContentItem {
+  type: 'paragraph' | 'heading' | 'div';
+  text?: string;
+  content?: Array<{ type: 'text' | 'link'; value?: string; text?: string; href?: string }>;
+}
+
+interface RecipeResponse {
+  type: 'recipe';
+  url: string;
+  data: {
+    recipeName: string;
+    description: string;
+    recipeImage: string;
+    ingredients: string[];
+    instructions: Array<{ text: string; image?: string }>;
+  };
+}
+
+interface NewsResponse {
+  type: 'news';
+  url: string;
+  data: {
+    title: string;
+    author: string;
+    published: { epoch: number | null; humanReadable: string };
+    image: string;
+    content: ContentItem[];
+  };
+}
+
+type ScrapeResponse = RecipeResponse | NewsResponse;
+
 @Component({
   selector: 'app-recipe',
   imports: [CommonModule, FormsModule, HttpClientModule],
@@ -15,7 +47,7 @@ import { Subscription } from 'rxjs';
   standalone: true
 })
 export class RecipeComponent implements OnInit, OnDestroy {
-  response: any;
+  response: ScrapeResponse | null = null;
   url: string = '';
   query: string = '';
   errorMessage: string = '';
@@ -32,7 +64,7 @@ export class RecipeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.fetchContentSubscription = this.route.queryParams.subscribe({
       next: (params) => {
-        this.url = params['url'];
+        this.url = params['url'] || '';
         if (this.url) {
           this.fetchContent();
         }
@@ -40,20 +72,19 @@ export class RecipeComponent implements OnInit, OnDestroy {
     });
   }
 
-  clear() {
-    this.url = '';
-    this.errorMessage = '';
-    this.router.navigateByUrl('/');
-    this.response = null;
-  }
-
   fetchContent() {
+    if (!this.url) {
+      this.errorMessage = 'Please enter a URL';
+      this.response = null;
+      return;
+    }
+
     console.log('Fetching content for URL:', this.url);
     this.getContentSubscription = this.recipeService.getRecipe(this.url).subscribe({
-      next: (data) => {
+      next: (data: ScrapeResponse) => {
         console.log('Scraped data:', data);
         if (data.type === 'news') {
-          console.log('News content:', JSON.stringify(data.data.content, null, 2)); // Enhanced debug
+          console.log('News content:', JSON.stringify(data.data.content, null, 2));
           console.log('News image:', data.data.image);
         }
         this.response = data;
@@ -71,6 +102,13 @@ export class RecipeComponent implements OnInit, OnDestroy {
         this.response = null;
       }
     });
+  }
+
+  clear() {
+    this.url = '';
+    this.errorMessage = '';
+    this.response = null;
+    this.router.navigateByUrl('/');
   }
 
   ngOnDestroy(): void {

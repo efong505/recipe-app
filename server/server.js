@@ -19,11 +19,13 @@ try {
 const app = express();
 const PORT = 3000;
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-}));
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 
 app.get("/scrape", async (req, res) => {
   const url = req.query.url;
@@ -50,22 +52,27 @@ app.get("/scrape", async (req, res) => {
   try {
     let data;
     if (selectors.type === "news" && hostname === "theepochtimes.com") {
-      const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
       const page = await browser.newPage();
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+      await page.setUserAgent(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+      );
       await page.setExtraHTTPHeaders({
-        'Accept-Language': 'en-US,en;q=0.9'
+        "Accept-Language": "en-US,en;q=0.9",
       });
       await page.setRequestInterception(true);
-      page.on('request', (request) => {
+      page.on("request", (request) => {
         const resourceUrl = request.url();
         if (
-          resourceUrl.includes('subscribe') ||
-          resourceUrl.includes('login') ||
-          resourceUrl.includes('modal') ||
-          resourceUrl.includes('popup') ||
-          resourceUrl.includes('paywall') ||
-          resourceUrl.includes('auth')
+          resourceUrl.includes("subscribe") ||
+          resourceUrl.includes("login") ||
+          resourceUrl.includes("modal") ||
+          resourceUrl.includes("popup") ||
+          resourceUrl.includes("paywall") ||
+          resourceUrl.includes("auth")
         ) {
           console.log(`Blocking request: ${resourceUrl}`);
           request.abort();
@@ -73,7 +80,7 @@ app.get("/scrape", async (req, res) => {
           request.continue();
         }
       });
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+      await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
       try {
         await page.waitForSelector(selectors.content, { timeout: 15000 });
         console.log(`Found content selector: ${selectors.content}`);
@@ -85,8 +92,9 @@ app.get("/scrape", async (req, res) => {
     } else {
       const response = await axios.get(url, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        },
       });
       data = response.data;
     }
@@ -115,7 +123,13 @@ app.get("/scrape", async (req, res) => {
         instructions.push({ text: instructionText, image: imageUrl });
       });
 
-      if (!recipeName && !description && !recipeImage && ingredients.length === 0 && instructions.length === 0) {
+      if (
+        !recipeName &&
+        !description &&
+        !recipeImage &&
+        ingredients.length === 0 &&
+        instructions.length === 0
+      ) {
         console.error("No recipe data found for", url);
         return res.status(404).send("No recipe found");
       }
@@ -128,102 +142,170 @@ app.get("/scrape", async (req, res) => {
           description: description || "N/A",
           recipeImage: recipeImage || "N/A",
           ingredients: ingredients.length ? ingredients : [],
-          instructions: instructions.length ? instructions : []
-        }
+          instructions: instructions.length ? instructions : [],
+        },
       });
     } else if (selectors.type === "news") {
       const publishedTime = $(selectors.publishedTime).attr("datetime") || $(selectors.publishedTime).text();
-      let epochTime = null;
-      let humanReadable = null;
-      if (publishedTime) {
-        const date = new Date(publishedTime);
-        if (!isNaN(date.getTime())) {
-          epochTime = Math.floor(date.getTime() / 1000);
-          humanReadable = date.toISOString();
-        }
-      }
+  let epochTime = null;
+  let humanReadable = null;
+  if (publishedTime) {
+    const date = new Date(publishedTime);
+    if (!isNaN(date.getTime())) {
+      epochTime = Math.floor(date.getTime() / 1000);
+      humanReadable = date.toISOString();
+    }
+  }
 
-      const title = $(selectors.title).text().trim();
-      const author = $(selectors.author).text().trim();
-      let image = $(selectors.image).attr("src");
-      if (image && !image.startsWith('http')) {
-        image = `https://www.theepochtimes.com${image}`;
-      }
-      const contentElements = $(selectors.content);
-      const content = [];
-      contentElements.children().each((i, elem) => {
-        const tag = elem.tagName.toLowerCase();
-        const parent = $(elem).parent();
-        if (
-          !$(elem).hasClass('eet-ad') &&
-          !$(elem).closest('div[data-testid="shortcode_related_article"]').length
-        ) {
-          if (tag === 'p') {
-            const text = $(elem).text().trim();
-            if (
-              text &&
-              !text.toLowerCase().includes('subscribe') &&
-              !text.toLowerCase().includes('support traditional journalism')
-            ) {
-              const my5Parent = $(elem).closest('div.my-5');
-              if (!my5Parent.length || my5Parent.find('h2').length || my5Parent.children().length > 1) {
-                content.push({ type: 'paragraph', text });
+  const title = $(selectors.title).text().trim();
+  const author = $(selectors.author).text().trim();
+  let image = $(selectors.image).attr("src");
+  if (image && !image.startsWith('http')) {
+    image = `https://www.theepochtimes.com${image}`;
+  }
+  const contentElements = $(selectors.content);
+  const content = [];
+  console.log('Content selector matched:', contentElements.length, 'elements');
+
+  contentElements.find('p, h2, div.my-5').each((i, elem) => {
+    const tag = elem.tagName.toLowerCase();
+    if (
+      !$(elem).hasClass('eet-ad') &&
+      !$(elem).closest('div[data-testid="shortcode_related_article"]').length
+    ) {
+      const text = $(elem).text().trim();
+      if (
+        text &&
+        !text.toLowerCase().includes('subscribe') &&
+        !text.toLowerCase().includes('support traditional journalism')
+      ) {
+        if (tag === 'p') {
+          content.push({ type: 'paragraph', text });
+        } else if (tag === 'h2') {
+          console.log(`Found h2: ${text}`);
+          content.push({ type: 'heading', text });
+        } else if (tag === 'div' && $(elem).hasClass('my-5')) {
+          const divContent = [];
+          $(elem).contents().each((j, node) => {
+            if (node.type === 'text') {
+              const nodeText = $(node).text().trim();
+              if (
+                nodeText &&
+                !nodeText.toLowerCase().includes('subscribe') &&
+                !nodeText.toLowerCase().includes('support traditional journalism')
+              ) {
+                divContent.push({ type: 'text', value: nodeText });
+              }
+            } else if (node.type === 'tag' && node.tagName.toLowerCase() === 'a') {
+              const linkText = $(node).text().trim();
+              const href = $(node).attr('href');
+              if (
+                linkText &&
+                !linkText.toLowerCase().includes('subscribe') &&
+                !linkText.toLowerCase().includes('support traditional journalism')
+              ) {
+                divContent.push({ type: 'link', text: linkText, href: href || '#' });
               }
             }
-          } else if (tag === 'h2') {
-            const text = $(elem).text().trim();
-            if (text) {
-              console.log(`Found h2: ${text}`); // Debug log
-              content.push({ type: 'heading', text });
-            }
-          } else if (tag === 'div' && $(elem).hasClass('my-5')) {
-            $(elem).contents().each((j, node) => {
-              if (node.type === 'text') {
-                const text = $(node).text().trim();
-                if (
-                  text &&
-                  !text.toLowerCase().includes('subscribe') &&
-                  !text.toLowerCase().includes('support traditional journalism')
-                ) {
-                  console.log(`Found div.my-5 text: ${text}`); // Debug log
-                  content.push({ type: 'paragraph', text });
-                }
-              } else if (node.type === 'tag' && node.tagName.toLowerCase() !== 'h2') {
-                const text = $(node).text().trim();
-                if (
-                  text &&
-                  !text.toLowerCase().includes('subscribe') &&
-                  !text.toLowerCase().includes('support traditional journalism')
-                ) {
-                  console.log(`Found div.my-5 inline tag text: ${text}`); // Debug log
-                  content.push({ type: 'paragraph', text });
-                }
-              }
-            });
+          });
+          if (divContent.length > 0) {
+            console.log(`Found div.my-5 content:`, JSON.stringify(divContent, null, 2));
+            content.push({ type: 'div', content: divContent });
           }
         }
-      });
-
-      console.log('Content array:', JSON.stringify(content, null, 2)); // Debug log
-      if (!epochTime && !title && !author && content.length === 0) {
-        console.error("No news article data found for", url);
-        return res.status(404).send("No article metadata or content found");
       }
+    }
+  });
+  console.log('Found h2 elements:', contentElements.find('h2').length);
+  console.log('Found div.my-5 elements:', contentElements.find('div.my-5').length);
+  console.log('Content array:', JSON.stringify(content, null, 2));
 
-      res.json({
-        type: "news",
-        url,
-        data: {
-          title: title || "N/A",
-          author: author || "N/A",
-          published: {
-            epoch: epochTime || null,
-            humanReadable: humanReadable || "N/A"
-          },
-          image: image || "N/A",
-          content: content.length ? content : [{ type: 'paragraph', text: 'N/A' }]
-        }
-      });
+  if (!epochTime && !title && !author && content.length === 0) {
+    console.error("No news article data found for", url);
+    return res.status(404).send("No article metadata or content found");
+  }
+
+  res.json({
+    type: "news",
+    url,
+    data: {
+      title: title || "N/A",
+      author: author || "N/A",
+      published: {
+        epoch: epochTime || null,
+        humanReadable: humanReadable || "N/A"
+      },
+      image: image || "N/A",
+      content: content.length ? content : [{ type: 'paragraph', text: 'N/A' }]
+    }
+  });
+    //   const publishedTime =
+    //     $(selectors.publishedTime).attr("datetime") ||
+    //     $(selectors.publishedTime).text();
+    //   let epochTime = null;
+    //   let humanReadable = null;
+    //   if (publishedTime) {
+    //     const date = new Date(publishedTime);
+    //     if (!isNaN(date.getTime())) {
+    //       epochTime = Math.floor(date.getTime() / 1000);
+    //       humanReadable = date.toISOString();
+    //     }
+    //   }
+
+    //   const title = $(selectors.title).text().trim();
+    //   const author = $(selectors.author).text().trim();
+    //   let image = $(selectors.image).attr("src");
+    //   if (image && !image.startsWith("http")) {
+    //     image = `https://www.theepochtimes.com${image}`;
+    //   }
+    //   const contentElements = $(selectors.content);
+    //   const content = [];
+    //   contentElements.find("p, h2").each((i, elem) => {
+    //     const tag = elem.tagName.toLowerCase();
+    //     if (
+    //       !$(elem).hasClass("eet-ad") &&
+    //       !$(elem).closest('div[data-testid="shortcode_related_article"]')
+    //         .length
+    //     ) {
+    //       const text = $(elem).text().trim();
+    //       if (
+    //         text &&
+    //         !text.toLowerCase().includes("subscribe") &&
+    //         !text.toLowerCase().includes("support traditional journalism")
+    //       ) {
+    //         if (tag === "p") {
+    //           content.push({ type: "paragraph", text });
+    //         } else if (tag === "h2") {
+    //           console.log(`Found h2: ${text}`);
+    //           content.push({ type: "heading", text });
+    //         }
+    //       }
+    //     }
+    //   });
+
+    //   console.log('Found h2 elements:', contentElements.find('h2').length);
+    //   console.log("Content array:", JSON.stringify(content, null, 2)); // Debug log
+    //   if (!epochTime && !title && !author && content.length === 0) {
+    //     console.error("No news article data found for", url);
+    //     return res.status(404).send("No article metadata or content found");
+    //   }
+
+    //   res.json({
+    //     type: "news",
+    //     url,
+    //     data: {
+    //       title: title || "N/A",
+    //       author: author || "N/A",
+    //       published: {
+    //         epoch: epochTime || null,
+    //         humanReadable: humanReadable || "N/A",
+    //       },
+    //       image: image || "N/A",
+    //       content: content.length
+    //         ? content
+    //         : [{ type: "paragraph", text: "N/A" }],
+    //     },
+    //   });
     } else {
       return res.status(400).send("Invalid config type");
     }
@@ -233,6 +315,6 @@ app.get("/scrape", async (req, res) => {
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
