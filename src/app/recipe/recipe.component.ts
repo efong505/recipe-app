@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { RecipeService } from '../services/recipe.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { timeout, retry, finalize } from 'rxjs/operators';
 
 interface ContentItem {
   type: 'paragraph' | 'heading' | 'div';
@@ -51,6 +52,7 @@ export class RecipeComponent implements OnInit, OnDestroy {
   url: string = '';
   query: string = '';
   errorMessage: string = '';
+  isLoading: boolean = false;
 
   fetchContentSubscription?: Subscription;
   getContentSubscription?: Subscription;
@@ -79,27 +81,29 @@ export class RecipeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Fetching content for URL:', this.url);
-    this.getContentSubscription = this.recipeService.getRecipe(this.url).subscribe({
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.response = null;
+
+    this.getContentSubscription = this.recipeService.getRecipe(this.url).pipe(
+      timeout(45000),
+      retry(1),
+      finalize(() => this.isLoading = false)
+    ).subscribe({
       next: (data: ScrapeResponse) => {
-        console.log('Scraped data:', data);
-        if (data.type === 'news') {
-          console.log('News content:', JSON.stringify(data.data.content, null, 2));
-          console.log('News image:', data.data.image);
-        }
         this.response = data;
-        this.errorMessage = '';
       },
       error: (error) => {
         console.error('Error fetching content:', error);
-        if (error.status === 400) {
+        if (error.name === 'TimeoutError') {
+          this.errorMessage = 'Request timed out. Please try again.';
+        } else if (error.status === 400) {
           this.errorMessage = error.error || 'Unsupported website or invalid URL';
         } else if (error.status === 404) {
           this.errorMessage = 'No content found';
         } else {
           this.errorMessage = 'An error occurred while scraping the website.';
         }
-        this.response = null;
       }
     });
   }
@@ -108,6 +112,7 @@ export class RecipeComponent implements OnInit, OnDestroy {
     this.url = '';
     this.errorMessage = '';
     this.response = null;
+    this.isLoading = false;
     this.router.navigateByUrl('/');
   }
 

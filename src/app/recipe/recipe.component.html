@@ -2,12 +2,18 @@
   <h1>Search for Recipe or News Article</h1>
 
   <div class="search-bar">
-    <input type="text" [(ngModel)]="url" placeholder="Enter URL" />
-    <button (click)="fetchContent()">Fetch Content</button>
-    <button (click)="clear()">Clear</button>
+    <input type="text" [(ngModel)]="url" placeholder="Enter URL" [disabled]="isLoading" />
+    <button (click)="fetchContent()" [disabled]="isLoading">
+      {{ isLoading ? 'Loading...' : 'Fetch Content' }}
+    </button>
+    <button (click)="clear()" [disabled]="isLoading">Clear</button>
   </div>
 
-  <div *ngIf="errorMessage" class="error">
+  <div *ngIf="isLoading" class="loading">
+    <p>Scraping content, please wait...</p>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="error">
     {{ errorMessage }}
   </div>
 

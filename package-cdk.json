@@ -1,0 +1,19 @@
+{
+  "name": "recipe-scraper-cdk",
+  "version": "1.0.0",
+  "description": "CDK deployment for recipe scraper",
+  "main": "app.js",
+  "scripts": {
+    "build": "echo 'No build needed'",
+    "deploy": "cdk deploy",
+    "destroy": "cdk destroy"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.100.0",
+    "constructs": "^10.3.0",
+    "aws-sdk": "^2.1691.0"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.100.0"
+  }
+}

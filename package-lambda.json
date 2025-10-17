@@ -1,0 +1,11 @@
+{
+  "name": "recipe-scraper-lambda",
+  "version": "1.0.0",
+  "description": "AWS Lambda function for recipe and news scraping",
+  "main": "scraper.js",
+  "dependencies": {
+    "chrome-aws-lambda": "^10.1.0",
+    "cheerio": "^1.0.0-rc.12",
+    "aws-sdk": "^2.1691.0"
+  }
+}

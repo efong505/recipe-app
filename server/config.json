@@ -67,5 +67,45 @@
     "title": "h1.article__title",
     "author": "meta[name='author']",
     "content": "div.article-body"
-  }
+  },
+  "bonappetit.com": {
+    "type": "recipe",
+    "recipeName": "h1[class*='title'], h1",
+    "description": "div.container--body-inner p",
+    "recipeImage": "img[class*='responsive-image__image'], meta[property='og:image']",
+    "ingredients": "div[class*='List-'] div[class*='Description-']",
+    "instructions": "div[data-testid='InstructionsWrapper'] p, ol[class*='instruction'] li, div[class*='instructions'] p"
+  },
+  "dailywire.com": {
+  "type": "news",
+  "title": "h1[class*='article-title'], h1",
+  "author": "span[class*='author'], div[class*='byline']",
+  "publishedTime": "time, span[class*='published']",
+  "content": "div[class*='article-body'] p",
+  "image": "img[class*='featured-image'], meta[property='og:image']"
+},
+"breitbart.com": {
+  "type": "news",
+  "title": "h1[class*='title'], h1",
+  "author": "span[class*='byline'], div[class*='author']",
+  "publishedTime": "time, span[class*='date']",
+  "content": "div[class*='entry-content'] p",
+  "image": "img[class*='post-image'], meta[property='og:image']"
+},
+"oann.com": {
+  "type": "news",
+  "title": "h1[class*='post-title'], h1",
+  "author": "span[class*='author'], div[class*='byline']",
+  "publishedTime": "time, span[class*='date']",
+  "content": "div[class*='entry-content'] p",
+  "image": "img[class*='wp-post-image'], meta[property='og:image']"
+},
+"newsmax.com": {
+  "type": "news",
+  "title": "h1[class*='article-title'], h1",
+  "author": "span[class*='author'], div[class*='byline']",
+  "publishedTime": "time, span[class*='date']",
+  "content": "div[class*='article-content'] p",
+  "image": "img[class*='article-image'], meta[property='og:image']"
+}
 }
