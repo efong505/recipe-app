@@ -1,5 +1,55 @@
-<div>
-  <input [(ngModel)]="query" placeholder="Search for a recipe" />
-  <button (click)="searchRecipe()">Search</button>
+<div class="hero-section">
+  <div class="hero-content">
+    <div class="hero-header">
+      <h1 class="hero-title">🍳 Recipe & News Scraper</h1>
+      <p class="hero-subtitle">Extract recipes and articles from your favorite websites instantly</p>
+    </div>
+    
+    <div class="search-card">
+      <div class="search-form">
+        <div class="input-group">
+          <input 
+            [(ngModel)]="query" 
+            placeholder="Paste any recipe or news article URL here..." 
+            class="url-input"
+          />
+          <button (click)="searchRecipe()" [disabled]="!query" class="search-button">
+            <span class="button-text">Extract Content</span>
+            <span class="button-icon">🔍</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="example-urls">
+        <p class="examples-title">Try these examples:</p>
+        <div class="example-buttons">
+          <button class="example-btn" (click)="setExampleUrl('https://www.theepochtimes.com/health/daily-cocoa-cuts-inflammation-by-70-percent-5920149')">
+            📰 News Article
+          </button>
+          <button class="example-btn" (click)="setExampleUrl('https://www.allrecipes.com/recipe/213742/cheesy-chicken-broccoli-casserole/')">
+            🍽️ Recipe
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast Extraction</h3>
+        <p>Get content in seconds</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌐</div>
+        <h3>Multiple Sites</h3>
+        <p>Works with popular websites</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <h3>Mobile Friendly</h3>
+        <p>Works on any device</p>
+      </div>
+    </div>
+  </div>
 </div>
 <iframe *ngIf="googleSearchUrl" [src]="googleSearchUrl" width="100%" height="600px"></iframe>

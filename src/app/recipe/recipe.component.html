@@ -1,12 +1,93 @@
-<div class="container">
-  <h1>Search for Recipe or News Article</h1>
+<div class="hero-section" *ngIf="!response">
+  <div class="hero-content">
+    <div class="hero-header">
+      <h1 class="hero-title">🍳 Recipe & News Scraper</h1>
+      <p class="hero-subtitle">Extract recipes and articles from your favorite websites instantly</p>
+    </div>
+    
+    <div class="search-card">
+      <div class="search-form">
+        <div class="input-group">
+          <input 
+            type="url" 
+            [(ngModel)]="url" 
+            placeholder="Paste any recipe or news article URL here..." 
+            class="url-input"
+            [disabled]="isLoading"
+          />
+          <button (click)="fetchContent()" [disabled]="isLoading || !url" class="search-button">
+            <span class="button-text">{{ isLoading ? 'Extracting...' : 'Extract Content' }}</span>
+            <span class="button-icon">🔍</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="example-urls">
+        <p class="examples-title">Try these examples:</p>
+        <div class="example-buttons">
+          <button class="example-btn" (click)="setExampleUrl('https://www.theepochtimes.com/health/daily-cocoa-cuts-inflammation-by-70-percent-5920149')" [disabled]="isLoading">
+            📰 News Article
+          </button>
+          <button class="example-btn" (click)="setExampleUrl('https://www.allrecipes.com/recipe/213742/cheesy-chicken-broccoli-casserole/')" [disabled]="isLoading">
+            🍽️ Recipe
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="supported-sites">
+      <h3 class="sites-title">Supported Websites</h3>
+      <div class="sites-grid">
+        <div class="site-category">
+          <h4 class="category-title">🍳 Recipe Sites</h4>
+          <div class="site-list">
+            <span class="site-tag">AllRecipes</span>
+            <span class="site-tag">Bon Appétit</span>
+            <span class="site-tag">Taste of Home</span>
+            <span class="site-tag">Simply Recipes</span>
+            <span class="site-tag">Epicurious</span>
+            <span class="site-tag">Betty Crocker</span>
+          </div>
+        </div>
+        <div class="site-category">
+          <h4 class="category-title">📰 News Sites</h4>
+          <div class="site-list">
+            <span class="site-tag">Epoch Times</span>
+            <span class="site-tag">BBC</span>
+            <span class="site-tag">CNN</span>
+            <span class="site-tag">Reuters</span>
+            <span class="site-tag">Daily Wire</span>
+            <span class="site-tag">Breitbart</span>
+            <span class="site-tag">OANN</span>
+            <span class="site-tag">Newsmax</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast Extraction</h3>
+        <p>Get content in seconds</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌐</div>
+        <h3>14+ Websites</h3>
+        <p>Recipe & news sites supported</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <h3>Mobile Friendly</h3>
+        <p>Works on any device</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <div class="search-bar">
-    <input type="text" [(ngModel)]="url" placeholder="Enter URL" [disabled]="isLoading" />
-    <button (click)="fetchContent()" [disabled]="isLoading">
-      {{ isLoading ? 'Loading...' : 'Fetch Content' }}
-    </button>
-    <button (click)="clear()" [disabled]="isLoading">Clear</button>
+<div class="container" *ngIf="response">
+  <div class="back-button">
+    <button (click)="clear()" class="back-btn">← Back to Search</button>
   </div>
 
   <div *ngIf="isLoading" class="loading">

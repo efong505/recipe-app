@@ -9,7 +9,8 @@
 # Node
 /node_modules
 server/node_modules
-server/node_modules
+lambda-simple/node_modules
+lambda-deploy/node_modules
 npm-debug.log
 yarn-error.log
 
@@ -54,3 +55,17 @@ server/chrome/
 # Uncomment if needed:
 # src/environments/environment.prod.ts
 # src/environments/environment.ts
+
+# Build artifacts and deployment files
+*.zip
+*.tar.gz
+*.log
+temp-*
+
+# Lambda deployment directories
+lambda-deploy/
+
+# Test and response files
+response.json
+test-payload.json
+simple-test.json

@@ -26,6 +26,10 @@ app.use(
 );
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.status(200).send("OK");
+});
+
 // Updated /scrape endpoint
 app.get("/scrape", async (req, res) => {
   const url = req.query.url;

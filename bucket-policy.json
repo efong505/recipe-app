@@ -1,0 +1,19 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontServicePrincipal",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::recipe-news-app-frontend/*",
+      "Condition": {
+        "StringEquals": {
+          "AWS:SourceArn": "arn:aws:cloudfront::371751795928:distribution/E12C3H0BU6X6J3"
+        }
+      }
+    }
+  ]
+}

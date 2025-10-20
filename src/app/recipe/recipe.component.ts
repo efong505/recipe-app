@@ -116,6 +116,11 @@ export class RecipeComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/');
   }
 
+  setExampleUrl(url: string) {
+    this.url = url;
+    this.fetchContent();
+  }
+
   ngOnDestroy(): void {
     this.fetchContentSubscription?.unsubscribe();
     this.getContentSubscription?.unsubscribe();

@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Recipe Scraper Fargate Stack - Recreates the ECS setup'
+
+Parameters:
+  ImageURI:
+    Type: String
+    Default: '371751795928.dkr.ecr.us-east-1.amazonaws.com/recipe-scraper:latest'
+    Description: 'ECR image URI for the recipe scraper'
+
+Resources:
+  # ECS Cluster
+  RecipeScraperCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: recipe-scraper-cluster
+      CapacityProviders:
+        - FARGATE
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+  # Task Definition
+  RecipeScraperTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: recipe-scraper
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 1024
+      Memory: 2048
+      ExecutionRoleArn: !Ref TaskExecutionRole
+      ContainerDefinitions:
+        - Name: recipe-scraper
+          Image: !Ref ImageURI
+          PortMappings:
+            - ContainerPort: 3000
+              Protocol: tcp
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+          Environment:
+            - Name: NODE_ENV
+              Value: production
+
+  # ECS Service
+  RecipeScraperService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: recipe-scraper-service
+      Cluster: !Ref RecipeScraperCluster
+      TaskDefinition: !Ref RecipeScraperTaskDefinition
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - sg-057232ebfc458bae2  # Existing security group
+          Subnets:
+            - subnet-06a2ecf732dbe5b92  # Existing subnet
+      LoadBalancers:
+        - ContainerName: recipe-scraper
+          ContainerPort: 3000
+          TargetGroupArn: arn:aws:elasticloadbalancing:us-east-1:371751795928:targetgroup/recipe-scraper-targets/784aef7b69855659
+
+  # Task Execution Role
+  TaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: ECRAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                Resource: '*'
+
+  # CloudWatch Log Group
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/recipe-scraper
+      RetentionInDays: 7
+
+Outputs:
+  ClusterName:
+    Description: 'ECS Cluster Name'
+    Value: !Ref RecipeScraperCluster
+    
+  ServiceName:
+    Description: 'ECS Service Name'
+    Value: !Ref RecipeScraperService
+    
+  TaskDefinitionArn:
+    Description: 'Task Definition ARN'
+    Value: !Ref RecipeScraperTaskDefinition

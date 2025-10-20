@@ -1,0 +1,47 @@
+{
+  "CallerReference": "recipe-app-2025",
+  "DefaultRootObject": "index.html",
+  "Origins": {
+    "Quantity": 1,
+    "Items": [
+      {
+        "Id": "recipe-s3-origin",
+        "DomainName": "recipe-news-app-frontend.s3.us-east-1.amazonaws.com",
+        "S3OriginConfig": {
+          "OriginAccessIdentity": ""
+        },
+        "OriginAccessControlId": "E31BIBNJYB7OXI"
+      }
+    ]
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "recipe-s3-origin",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "TrustedSigners": {
+      "Enabled": false,
+      "Quantity": 0
+    },
+    "ForwardedValues": {
+      "QueryString": false,
+      "Cookies": {
+        "Forward": "none"
+      }
+    },
+    "MinTTL": 0,
+    "DefaultTTL": 86400,
+    "MaxTTL": 31536000
+  },
+  "Comment": "Recipe App CloudFront Distribution",
+  "Enabled": true,
+  "CustomErrorResponses": {
+    "Quantity": 1,
+    "Items": [
+      {
+        "ErrorCode": 404,
+        "ResponsePagePath": "/index.html",
+        "ResponseCode": "200",
+        "ErrorCachingMinTTL": 300
+      }
+    ]
+  }
+}

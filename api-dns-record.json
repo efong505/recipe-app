@@ -1,0 +1,16 @@
+{
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "api.mytestimony.click",
+        "Type": "A",
+        "AliasTarget": {
+          "DNSName": "recipe-scraper-alb-1638655466.us-east-1.elb.amazonaws.com",
+          "EvaluateTargetHealth": false,
+          "HostedZoneId": "Z35SXDOTRQ7X7K"
+        }
+      }
+    }
+  ]
+}

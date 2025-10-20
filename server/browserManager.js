@@ -12,9 +12,12 @@ class BrowserManager {
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-web-security",
-        "--disable-features=VizDisplayCompositor"
+        "--disable-features=VizDisplayCompositor",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-renderer-backgrounding"
       ],
-      executablePath: process.env.CHROME_PATH || 'C:\\Users\\Ed\\Documents\\Programming\\Angular\\webscraping\\Project\\recipe-app\\server\\chrome\\win64-129.0.6668.100\\chrome-win64\\chrome.exe'
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH
     });
   }
 

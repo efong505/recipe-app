@@ -78,7 +78,7 @@ exports.handler = async (event) => {
             }
         });
 
-        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
         const html = await page.content();
         await browser.close();
 
@@ -98,12 +98,9 @@ exports.handler = async (event) => {
     } catch (error) {
         console.error('Error:', error);
         return {
-            statusCode: error.name === 'TimeoutError' ? 504 : 500,
+            statusCode: 500,
             headers,
-            body: JSON.stringify({ 
-                error: error.name === 'TimeoutError' ? 'Request timeout' : 'Scraping failed',
-                message: error.message 
-            })
+            body: JSON.stringify({ error: 'Scraping failed' })
         };
     }
 };

@@ -34,7 +34,7 @@ class RecipeScraperStack extends cdk.Stack {
           ],
         },
       }),
-      timeout: cdk.Duration.seconds(30),
+      timeout: cdk.Duration.seconds(60),
       memorySize: 1024,
       environment: {
         CONFIG_TABLE_NAME: configTable.tableName,
@@ -54,13 +54,16 @@ class RecipeScraperStack extends cdk.Stack {
     });
 
     const scrapeResource = api.root.addResource('scrape');
-    scrapeResource.addMethod('GET', new apigateway.LambdaIntegration(scraperFunction));
+    scrapeResource.addMethod('GET', new apigateway.LambdaIntegration(scraperFunction, {
+      timeout: cdk.Duration.seconds(29),
+    }));
 
     // S3 bucket for frontend
     const websiteBucket = new s3.Bucket(this, 'WebsiteBucket', {
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
       publicReadAccess: true,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
     });

@@ -23,12 +23,19 @@ export class SearchComponent implements AfterViewInit {
   ){}
 
   searchRecipe() {
-    const url =
-        `https://www.google.com/search?q=${
-        encodeURIComponent(
-          this.query + ' recipe')}`;
+    if (this.query.startsWith('http')) {
+      // If it's a URL, navigate to recipe component
+      this.router.navigate(['/'], { queryParams: { url: this.query } });
+    } else {
+      // If it's a search term, open Google search
+      const url = `https://www.google.com/search?q=${encodeURIComponent(this.query + ' recipe')}`;
+      window.open(url, '_blank');
+    }
+  }
 
-          window.open(url, '_blank');
+  setExampleUrl(url: string) {
+    this.query = url;
+    this.searchRecipe();
   }
 
   ngAfterViewInit() {
