@@ -75,77 +75,69 @@ recipe-app/
 ### Prerequisites
 - Node.js 18+
 - Angular CLI: `npm install -g @angular/cli`
-- AWS CLI (for deployment)
-- AWS CDK: `npm install -g aws-cdk`
+- AWS CLI (for AWS deployment)
 
-### Local Development
+### Local Development (Free)
 
-1. **Clone and Install Dependencies**
+1. **Install Dependencies**
    ```bash
-   git clone <repository-url>
-   cd recipe-app
    npm install
-   cd server && npm install
+   cd server && npm install && npx puppeteer browsers install chrome
    ```
 
-2. **Start Backend Server**
+2. **Switch to Local Mode**
+   ```powershell
+   .\toggle-env.ps1 local
+   ```
+
+3. **Start Backend** (Terminal 1)
    ```bash
    cd server
    npm start
-   # Server runs on http://localhost:3000
    ```
 
-3. **Start Frontend**
+4. **Start Frontend** (Terminal 2)
    ```bash
    ng serve
-   # App runs on http://localhost:4200
    ```
 
-4. **Test Scraping**
-   ```bash
-   # Test recipe scraping
-   curl "http://localhost:3000/scrape?url=https://www.bonappetit.com/recipe/..."
-   
-   # Test news scraping
-   curl "http://localhost:3000/scrape?url=https://www.theepochtimes.com/..."
-   ```
+5. **Open Browser**
+   Navigate to `http://localhost:4200`
 
-## 🌐 Deployment Options
+📖 **Full guide:** See [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md)
 
-### Option 1: AWS Serverless (Recommended)
+## 🌐 AWS Fargate Deployment (Recommended)
 
-1. **Build Angular App**
-   ```bash
-   ng build --configuration production
-   ```
+### Management Commands
 
-2. **Deploy Infrastructure**
-   ```bash
-   cdk bootstrap  # First time only
-   cdk deploy
-   ```
+```powershell
+# Check status and costs
+.\manage-fargate.ps1 status
+.\manage-fargate.ps1 cost
 
-3. **Configure DynamoDB**
-   ```bash
-   node populate-dynamodb.js <TABLE_NAME_FROM_CDK_OUTPUT>
-   ```
+# Start deployment
+.\manage-fargate.ps1 start
 
-4. **Update Frontend Config**
-   Update `src/environments/environment.prod.ts` with API Gateway URL from CDK output.
+# Stop deployment (stops charges)
+.\manage-fargate.ps1 stop
+```
 
-### Option 2: AWS Fargate
+### Switch Frontend to Production API
 
-1. **Build and Deploy**
-   ```bash
-   ./deploy-fargate.bat
-   ```
+```powershell
+.\toggle-env.ps1 production
+ng serve
+```
 
-### Option 3: Simple Lambda Deployment
+📖 **Full guide:** See [FARGATE-DEPLOYMENT.md](FARGATE-DEPLOYMENT.md)
 
-1. **Deploy Lambda Function**
-   ```bash
-   ./simple-deploy.bat
-   ```
+### Alternative: AWS Lambda + CDK
+
+```bash
+cdk bootstrap  # First time only
+cdk deploy
+node populate-dynamodb.js <TABLE_NAME>
+```
 
 ## 📝 Configuration
 
@@ -181,6 +173,24 @@ The application uses DynamoDB to store website-specific scraping configurations:
 
 **News:**
 - Epoch Times (theepochtimes.com)
+
+## 📜 Management Scripts
+
+### toggle-env.ps1
+Switch between local and production API endpoints:
+```powershell
+.\toggle-env.ps1 local       # Use localhost:3000
+.\toggle-env.ps1 production  # Use AWS Fargate API
+```
+
+### manage-fargate.ps1
+Manage AWS Fargate deployment:
+```powershell
+.\manage-fargate.ps1 status  # Check deployment status
+.\manage-fargate.ps1 start   # Deploy to AWS
+.\manage-fargate.ps1 stop    # Stop and delete (stops charges)
+.\manage-fargate.ps1 cost    # View current AWS costs
+```
 
 ## 🔧 Development
 
@@ -239,15 +249,18 @@ DEBUG=puppeteer* node server/server.js
 node server/test_puppeteer.js
 ```
 
-## 💰 Cost Estimation (AWS)
+## 💰 Cost Monitoring
 
-**Monthly costs for moderate usage (1000 requests/month):**
-- Lambda: ~$0.20
-- DynamoDB: ~$0.25
-- S3: ~$0.50
-- CloudFront: ~$1.00
-- API Gateway: ~$3.50
-- **Total: ~$5.45/month**
+**Check current AWS costs:**
+```powershell
+.\manage-fargate.ps1 cost
+```
+
+**Estimated Fargate costs:**
+- ~$0.01-0.05 per hour while running
+- Always stop when not in use: `.\manage-fargate.ps1 stop`
+
+**Local development:** $0 (free)
 
 ## 🔒 Security Considerations
 
@@ -261,30 +274,30 @@ node server/test_puppeteer.js
 
 ### Common Issues
 
-1. **Puppeteer timeout errors**
-   - Increase timeout in Lambda configuration
-   - Check website's anti-bot measures
+1. **Chrome not found (local)**
+   ```bash
+   cd server
+   npx puppeteer browsers install chrome
+   ```
 
-2. **CORS errors**
-   - Verify API Gateway CORS settings
-   - Check environment.prod.ts API URL
+2. **Wrong API endpoint**
+   ```powershell
+   # For local development
+   .\toggle-env.ps1 local
+   
+   # For AWS Fargate
+   .\toggle-env.ps1 production
+   ```
 
-3. **DynamoDB access denied**
-   - Verify Lambda execution role permissions
-   - Check table name in environment variables
+3. **Fargate not responding**
+   ```powershell
+   .\manage-fargate.ps1 status
+   ```
+   Wait 2-3 minutes after starting for tasks to be ready
 
-### Debug Commands
-
-```bash
-# Test Lambda function locally
-sam local invoke ScraperFunction --event test-payload.json
-
-# Check CDK diff
-cdk diff
-
-# View CloudFormation stack
-aws cloudformation describe-stacks --stack-name RecipeScraperStack
-```
+4. **CORS errors**
+   - Verify correct environment with `toggle-env.ps1`
+   - Check Fargate is running with `manage-fargate.ps1 status`
 
 ## 🤝 Contributing
 
