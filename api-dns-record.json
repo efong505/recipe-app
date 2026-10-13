@@ -3,12 +3,12 @@
     {
       "Action": "CREATE",
       "ResourceRecordSet": {
-        "Name": "api.mytestimony.click",
+        "Name": "api.example.com",
         "Type": "A",
         "AliasTarget": {
-          "DNSName": "recipe-scraper-alb-1638655466.us-east-1.elb.amazonaws.com",
+          "DNSName": "<ALB_DNS_NAME>",
           "EvaluateTargetHealth": false,
-          "HostedZoneId": "Z35SXDOTRQ7X7K"
+          "HostedZoneId": "<ALB_HOSTED_ZONE_ID>"
         }
       }
     }
