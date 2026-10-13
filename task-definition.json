@@ -4,12 +4,12 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::371751795928:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::371751795928:role/recipe-scraper-task-role",
+  "executionRoleArn": "arn:aws:iam::<AWS_ACCOUNT_ID>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<AWS_ACCOUNT_ID>:role/recipe-scraper-task-role",
   "containerDefinitions": [
     {
       "name": "recipe-scraper",
-      "image": "371751795928.dkr.ecr.us-east-1.amazonaws.com/recipe-scraper:latest",
+      "image": "<AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/recipe-scraper:latest",
       "portMappings": [
         {
           "containerPort": 3000,
@@ -19,7 +19,7 @@
       "environment": [
         {
           "name": "AWS_REGION",
-          "value": "us-east-1"
+          "value": "<AWS_REGION>"
         },
         {
           "name": "CONFIG_TABLE_NAME",
@@ -30,7 +30,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/recipe-scraper",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "<AWS_REGION>",
           "awslogs-stream-prefix": "ecs"
         }
       },
