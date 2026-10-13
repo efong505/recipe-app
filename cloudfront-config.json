@@ -1,16 +1,16 @@
 {
-  "CallerReference": "recipe-app-2025",
+  "CallerReference": "recipe-app-example",
   "DefaultRootObject": "index.html",
   "Origins": {
     "Quantity": 1,
     "Items": [
       {
         "Id": "recipe-s3-origin",
-        "DomainName": "recipe-news-app-frontend.s3.us-east-1.amazonaws.com",
+        "DomainName": "<FRONTEND_BUCKET_NAME>.s3.<AWS_REGION>.amazonaws.com",
         "S3OriginConfig": {
           "OriginAccessIdentity": ""
         },
-        "OriginAccessControlId": "E31BIBNJYB7OXI"
+        "OriginAccessControlId": "<ORIGIN_ACCESS_CONTROL_ID>"
       }
     ]
   },
