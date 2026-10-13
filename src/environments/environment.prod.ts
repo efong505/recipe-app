@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.mytestimony.click'
+  // Replace during deployment with the environment-specific API endpoint.
+  apiUrl: 'https://api.example.com'
 };
